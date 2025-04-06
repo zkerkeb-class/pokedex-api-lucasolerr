@@ -1,6 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import protect from '../../middleware/auth.js';
 
 const router = express.Router();
 
@@ -78,5 +79,47 @@ router.post('/login', async (req, res) => {
       });
     }
 });
+
+router.post('/favorites/:pokemonId', protect, async (req, res) => {
+  try {
+    const user = req.user;
+    const { pokemonId } = req.params;
+
+    if (!user.favorites.includes(pokemonId)) {
+      user.favorites.push(pokemonId);
+      await user.save();
+    }
+
+    res.status(200).json({ favorites: user.favorites });
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur ajout favori', error: err.message });
+  }
+});
+
+router.delete('/favorites/:pokemonId', protect, async (req, res) => {
+  try {
+    const user = req.user;
+    const { pokemonId } = req.params;
+
+    user.favorites = user.favorites.filter(
+      (fav) => fav.toString() !== pokemonId
+    );
+
+    await user.save();
+    res.status(200).json({ favorites: user.favorites });
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur suppression favori', error: err.message });
+  }
+});
+
+router.get('/favorites', protect, async (req, res) => {
+  try {
+    const userWithFavs = await User.findById(req.user._id).populate('favorites');
+    res.status(200).json({ favorites: userWithFavs.favorites });
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur récupération favoris', error: err.message });
+  }
+});
+
 
 export default router;

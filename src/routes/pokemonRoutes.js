@@ -52,7 +52,7 @@ router.get('/', protect, async (req, res) => {
 // GET - Récupérer un pokémon par son ID
 router.get('/:id', protect, async (req, res) => {
   try {
-    const pokemon = await Pokemon.findOne({ id: req.params.id });
+    const pokemon = await Pokemon.findById(req.params.id);
     if (!pokemon) {
       return res.status(404).json({ message: "Pokémon non trouvé" });
     }
@@ -68,11 +68,6 @@ router.get('/:id', protect, async (req, res) => {
 // POST - Créer un nouveau pokémon
 router.post('/', protect, async (req, res) => {
   try {
-    // Vérifier si l'ID existe déjà
-    const existingPokemon = await Pokemon.findOne({ id: req.body.id });
-    if (existingPokemon) {
-      return res.status(400).json({ message: "Un pokémon avec cet ID existe déjà" });
-    }
     const newPokemon = new Pokemon(req.body);
     await newPokemon.save();
     res.status(201).json(newPokemon);
@@ -87,8 +82,8 @@ router.post('/', protect, async (req, res) => {
 // PUT - Mettre à jour un pokémon
 router.put('/:id', protect, async (req, res) => {
   try {
-    const updatedPokemon = await Pokemon.findOneAndUpdate(
-      { id: req.params.id },
+    const updatedPokemon = await Pokemon.findByIdAndUpdate(
+      req.params.id,
       req.body,
       { new: true, runValidators: true }
     );
@@ -104,10 +99,10 @@ router.put('/:id', protect, async (req, res) => {
   }
 });
 
-// DELETE - Supprimer un pokémon
+// DELETE
 router.delete('/:id', protect, async (req, res) => {
   try {
-    const deletedPokemon = await Pokemon.findOneAndDelete({ id: req.params.id });
+    const deletedPokemon = await Pokemon.findByIdAndDelete(req.params.id);
     if (!deletedPokemon) {
       return res.status(404).json({ message: "Pokémon non trouvé" });
     }
