@@ -6,35 +6,40 @@ const router = express.Router();
 
 router.get('/', protect, async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
-    const skip = (page - 1) * limit;
-
-    const { type, name } = req.query;
-
+    const { page, limit, type, name } = req.query;
     const filters = {};
+    const currentPage = parseInt(page) || 1;
+    const currentLimit = parseInt(limit) || 20;
+    const skip = (currentPage - 1) * currentLimit;
 
+    // Si un type est filtré
     if (type) {
-      filters.types = type.toLowerCase();
+      const selectedTypes = type.toLowerCase().split(',');
+      filters.types = { $all: selectedTypes }; // Vérifie que tous les types sont présents
     }
 
+    // Si un nom est filtré
     if (name) {
-      filters['name.english'] = { $regex: name, $options: 'i' }; // recherche insensible à la casse
+      filters['name.french'] = { $regex: name, $options: 'i' }; // Recherche insensible à la casse
     }
 
-    const pokemons = await Pokemon.find(filters)
-      .skip(skip)
-      .limit(limit);
+    // Récupérer les pokémons filtrés
+    const pokemons = await Pokemon.find(filters).skip(skip).limit(currentLimit);
 
+    // Récupérer le nombre total de pokémons filtrés
     const total = await Pokemon.countDocuments(filters);
 
+    // Récupérer tous les types uniques disponibles
+    const allTypes = await Pokemon.distinct('types');
+
     res.status(200).json({
-      page,
-      limit,
+      page: currentPage,
+      limit: currentLimit,
       total,
-      totalPages: Math.ceil(total / limit),
+      totalPages: Math.ceil(total / currentLimit),
       filters: req.query,
-      data: pokemons
+      types: allTypes,
+      pokemons: pokemons
     });
   } catch (error) {
     res.status(500).json({
@@ -43,8 +48,6 @@ router.get('/', protect, async (req, res) => {
     });
   }
 });
-
-
 
 // GET - Récupérer un pokémon par son ID
 router.get('/:id', protect, async (req, res) => {

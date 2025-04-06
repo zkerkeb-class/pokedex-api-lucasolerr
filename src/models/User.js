@@ -22,7 +22,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['admin', 'user'],
     default: 'user'
-  }
+  },
+  favorites: {
+    type: [mongoose.Schema.Types.ObjectId], // Référence aux Pokémon
+    ref: 'Pokemon', // Lien avec le modèle Pokemon
+    default: []
+  },
 }, {
   timestamps: true
 });
