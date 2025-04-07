@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import User from '../src/models/User.js'; // Assure-toi que le chemin est bon
+import User from '../models/User.js'; // Assure-toi que le chemin est bon
 
 const protect = async (req, res, next) => {
   const token = req.headers['authorization'];
