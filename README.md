@@ -1,5 +1,7 @@
 # 🔧 API Pokédex – Back-end
 
+Vidéo du projet : `https://youtu.be/eRHQAzyFBn0`
+
 ## 📋 Description du projet
 
 Cette API REST a été développée avec **Node.js** et **Express.js** pour fournir les données d’un Pokédex à un front-end React.  
