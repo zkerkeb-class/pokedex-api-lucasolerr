@@ -1,91 +1,105 @@
-## Concepts à Comprendre
+# 🔧 API Pokédex – Back-end
 
-1. REST API
+## 📋 Description du projet
 
-   - Méthodes HTTP (GET, POST, PUT, DELETE)
-   - Codes de statut HTTP
-   - Structure des URL
-   - CORS (Cross-Origin Resource Sharing)
+Cette API REST a été développée avec **Node.js** et **Express.js** pour fournir les données d’un Pokédex à un front-end React.  
+Elle permet la gestion des Pokémon (CRUD), l’authentification des utilisateurs, et la gestion des favoris.
 
-1. Express.js
+---
 
-   - Routing
-   - Middleware
-   - Gestion des requêtes et réponses
-   - Configuration CORS
+## 🚀 Installation
 
-1. Sécurité de Base
+### Prérequis
 
-   - Validation des entrées
-   - Authentification
-   - Gestion des erreurs
-   - Politiques CORS
+- Node.js (v16+ recommandé)
+- npm
+- MongoDB local ou distant
 
-## Configuration CORS
+### Étapes
 
-CORS (Cross-Origin Resource Sharing) est un mécanisme qui permet à de nombreuses ressources (polices, JavaScript, etc.) d'une page web d'être demandées à partir d'un autre domaine que celui du domaine d'origine.
+1. Cloner le dépôt :
 
-Pour utiliser l'API depuis un autre domaine :
-
-1. L'API est configurée avec CORS activé
-1. Toutes les origines sont autorisées dans cette version de développement
-1. En production, vous devriez restreindre les origines autorisées
-
-Pour une configuration plus restrictive, vous pouvez modifier les options CORS :
-
-```javascript
-app.use(cors({
-  origin: 'https://votre-domaine.com',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+```bash
+git clone https://github.com/zkerkeb-class/pokedex-api-lucasolerr.git
+cd pokedex-api-lucasolerr
 ```
 
-## Ressources Additionnelles
-
-- [Documentation Express.js](https://expressjs.com/fr/)
-- [Guide des Status HTTP](https://developer.mozilla.org/fr/docs/Web/HTTP/Status)
-- [REST API Best Practices](https://restfulapi.net/)
-
-## Support
-
-Pour toute question ou problème :
-
-1. Vérifiez la documentation
-1. Consultez les messages d'erreur dans la console
-1. Demandez de l'aide à votre formateur
-
-## Prochaines Étapes
-
-- Ajout d'une base de données (MongoDB)
-- Implémentation de tests automatisés
-- Déploiement de l'API
-- Documentation avec Swagger
-
-## Gestion des Fichiers Statiques
-
-Le serveur expose le dossier `assets` pour servir les images des Pokémon. Les images sont accessibles via l'URL :
-
-```
-http://localhost:3000/assets/pokemons/{id}.png
+2. Installer les dépendances
+```sh
+npm install
 ```
 
-Par exemple, pour accéder à l'image de Pikachu (ID: 25) :
+3. Fichier `.env`
 
+```txt
+PORT=3000
+MONGO_URI=mongodb://localhost:27017/pokedex
+JWT_SECRET=supersecretkey
 ```
-http://localhost:3000/assets/pokemons/25.png
+
+4. Démarrer le serveur
+
+```sh
+npm run dev
 ```
 
-### Configuration
+L'API sera disponible sur `http://localhost:3000`
 
-Le middleware `express.static` est utilisé pour servir les fichiers statiques :
+## 🔐 Concepts Clés
 
-```javascript
-app.use('/assets', express.static(path.join(__dirname, '../assets')));
-```
+### API REST
+
+- GET, POST, PUT, DELETE
+
+- Codes de statut HTTP
+
+- Requêtes avec filtres et pagination
+
+### Express.js
+
+- Routing
+
+- Middleware
+
+- Contrôleurs
 
 ### Sécurité
 
-- Seuls les fichiers du dossier `assets` sont exposés
-- Les autres dossiers du projet restent inaccessibles
-- En production, considérez l'utilisation d'un CDN pour les fichiers statiques
+- Authentification avec JWT
+
+- Validation des entrées
+
+- CORS
+
+- Gestion des erreurs
+
+## 📑 Documentation de l’API
+
+### 📁 Pokémons – `/api/pokemons`
+
+| Méthode | URL                      | Description                          | Accès  |
+|--------:|--------------------------|--------------------------------------|--------|
+| GET     | `/api/pokemons`          | Liste de tous les Pokémon avec filtres, pagination et types | Privé  |
+| GET     | `/api/pokemons/:id`      | Détails d’un Pokémon spécifique      | Privé  |
+| POST    | `/api/pokemons`          | Créer un nouveau Pokémon             | Privé  |
+| PUT     | `/api/pokemons/:id`      | Mettre à jour un Pokémon             | Privé  |
+| DELETE  | `/api/pokemons/:id`      | Supprimer un Pokémon                 | Privé  |
+
+#### 🔍 Query Parameters (GET `/api/pokemons`)
+
+- `name` → Filtrer par nom (`name.french`)
+- `type` → Filtrer par types séparés par virgule (`fire,water`)
+- `page` → Numéro de la page (pagination)
+- `limit` → Nombre de Pokémon par page
+
+---
+
+### 👤 Utilisateurs – `/api/users`
+
+| Méthode | URL                                      | Description                          | Accès  |
+|--------:|------------------------------------------|--------------------------------------|--------|
+| POST    | `/api/users/register`                    | Enregistrement d’un nouvel utilisateur | Public |
+| POST    | `/api/users/login`                       | Connexion utilisateur                | Public |
+| GET     | `/api/users/favorites`                   | Obtenir la liste des Pokémon favoris | Privé  |
+| POST    | `/api/users/favorites/:pokemonId`        | Ajouter un Pokémon aux favoris       | Privé  |
+| DELETE  | `/api/users/favorites/:pokemonId`        | Supprimer un Pokémon des favoris     | Privé  |
