@@ -23,7 +23,7 @@ const pokemonsList = [
             "Sp. Defense": 65,
             "Speed": 45
         },
-        "image": `${process.env.API_URL}/assets/pokemons/1.png`     
+        "image": `${process.env.API_URL}/assets/pokemons/1.png`
     },
     {
         "id": 2,
@@ -45,7 +45,7 @@ const pokemonsList = [
             "Sp. Defense": 80,
             "Speed": 60
         },
-        "image": `${process.env.API_URL}/assets/pokemons/2.png` 
+        "image": `${process.env.API_URL}/assets/pokemons/2.png`
     },
     {
         "id": 3,
@@ -3243,4 +3243,28 @@ const pokemonsList = [
     }
 ]
 
-export default pokemonsList;
+const typeMapping = {
+    Normal: 1,
+    Fighting: 2,
+    Flying: 3,
+    Poison: 4,
+    Ground: 5,
+    Rock: 6,
+    Bug: 7,
+    Ghost: 8,
+    Steel: 9,
+    Fire: 10,
+    Water: 11,
+    Grass: 12,
+    Electric: 13,
+    Psychic: 14,
+    Ice: 15,
+    Dragon: 16,
+    Dark: 17,
+    Fairy: 18
+};
+
+export default pokemonsList.map((pokemon) => ({
+    ...pokemon,
+    typeImages: pokemon.type.map(type => `${process.env.API_URL}/assets/types/${typeMapping[type]}.png`)
+  }));
